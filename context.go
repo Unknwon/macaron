@@ -403,7 +403,7 @@ func (ctx *Context) GetSecureCookie(key string) (string, bool) {
 func (ctx *Context) SetSuperSecureCookie(secret, name, value string, others ...interface{}) {
 	m := md5.Sum([]byte(secret))
 	secret = hex.EncodeToString(m[:])
-	text, err := com.AESEncrypt([]byte(secret), []byte(value))
+	text, err := com.AESGCMEncrypt([]byte(secret), []byte(value))
 	if err != nil {
 		panic("error encrypting cookie: " + err.Error())
 	}
@@ -424,7 +424,7 @@ func (ctx *Context) GetSuperSecureCookie(secret, key string) (string, bool) {
 
 	m := md5.Sum([]byte(secret))
 	secret = hex.EncodeToString(m[:])
-	text, err := com.AESDecrypt([]byte(secret), data)
+	text, err := com.AESGCMDecrypt([]byte(secret), data)
 	return string(text), err == nil
 }
 
